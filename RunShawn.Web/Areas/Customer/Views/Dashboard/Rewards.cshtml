@@ -1,0 +1,106 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+}
+
+    <script type="text/javascript">
+        function ShowAlert() {
+            alert("Przedmiot został wybrany.");
+        }
+    </script>
+
+<div class="awards-container">
+    <div class="single-award" style="width:24%">
+        @using (Html.BeginForm("Send", "SMS", FormMethod.Post, new { @class = "product-form", style = "margin: 5px 10px 5px 0" }))
+        {
+            <div class="image-container"><div class="image-background" style="background-image: url('@Url.Content("~/Content/images/awards/1.png")');"></div></div>
+            <div value="Koszulka" class="header">Koszulka</div>
+            <div class="poins">1500 pkt</div>
+            <input name="Text" type="hidden" value="Koszulka" />
+            <div onclick="ShowAlert()" class="button"><asp:button id="Button1"
+            usesubmitbehavior="true"
+            text="Open Web site"
+            onclientclick="ShowAlert()"
+            runat="server" onclick="Button1_Click" /><button type-"submit">Wybieram</button></div>
+        }
+    </div>
+    <div class="single-award" style="width:24%">
+        @using (Html.BeginForm("Send", "SMS", FormMethod.Post, new { @class = "product-form", style = "margin: 5px 10px 5px 0" }))
+        {
+
+            <div class="image-container"><div class="image-background" style="background-image: url('@Url.Content("~/Content/images/awards/2.png")');"></div></div>
+            <div name="text" value="Bilet do kina" class="header">Bilet do kina</div>
+            <div class="poins">300 pkt</div>
+            <input name="Text" type="hidden" value="Bilet do kina" />
+            <div class="button"><asp:button id="Button1"
+            usesubmitbehavior="true"
+            text="Open Web site"
+            onclientclick="ShowAlert()"
+            runat="server" onclick="Button1_Click" /><button type-"submit">Wybieram</button></div>
+
+        }
+    </div>
+    <div class="single-award" style="width:24%">
+        @using (Html.BeginForm("Send", "SMS", FormMethod.Post, new { @class = "product-form", style = "margin: 5px 10px 5px 0" }))
+        {
+
+            <div class="image-container"><div class="image-background" style="background-image: url('@Url.Content("~/Content/images/awards/4.png")');"></div></div>
+            <div name="text" value="Piłka do gry" class="header">Piłka do gry</div>
+            <div class="poins">3000 pkt</div>
+            <input name="Text" type="hidden" value="Piłka do gry" />
+            <div class="button"><asp:button id="Button1"
+            usesubmitbehavior="true"
+            text="Open Web site"
+            onclientclick="ShowAlert()"
+            runat="server" onclick="Button1_Click" /><button type-"submit">Wybieram</button></div>
+
+        }
+    </div>
+    <div class="single-award" style="width:24%">
+        @using (Html.BeginForm("Send", "SMS", FormMethod.Post, new { @class = "product-form", style = "margin: 5px 10px 5px 0" }))
+        {
+
+            <div class="image-container"><div class="image-background" style="background-image: url('@Url.Content("~/Content/images/awards/5.png")');"></div></div>
+            <div name="text" value="Plecak" class="header">Plecak</div>
+            <div class="poins">3500 pkt</div>
+            <input name="Text" type="hidden" value="Plecak" />
+            <div class="button"><asp:button id="Button1"
+            usesubmitbehavior="true"
+            text="Open Web site"
+            onclientclick="ShowAlert()"
+            runat="server" onclick="Button1_Click" /><button type-"submit">Wybieram</button></div>
+
+        }
+    </div>
+    <div class="single-award" style="width:24%">
+        @using (Html.BeginForm("Send", "SMS", FormMethod.Post, new { @class = "product-form", style = "margin: 5px 10px 5px 0" }))
+        {
+
+            <div class="image-container"><div class="image-background" style="background-image: url('@Url.Content("~/Content/images/awards/6.png")');"></div></div>
+            <div name="text" value="Obciążenie" class="header">Obciążenie</div>
+            <div class="poins">5000 pkt</div>
+            <input name="Text" type="hidden" value="Obciążenie" />
+            <div class="button"><asp:button id="Button1"
+            usesubmitbehavior="true"
+            text="Open Web site"
+            onclientclick="ShowAlert()"
+            runat="server" onclick="Button1_Click" /><button type-"submit">Wybieram</button></div>
+
+        }
+    </div>
+    <div class="single-award" style="width:24%">
+        @using (Html.BeginForm("Send", "SMS", FormMethod.Post, new { @class = "product-form", style = "margin: 5px 10px 5px 0" }))
+        {
+
+            <div class="image-container"><div class="image-background" style="background-image: url('@Url.Content("~/Content/images/awards/7.png")');"></div></div>
+            <div name="text" value="Schowek na rower" class="header">Schowek na rower</div>
+            <div class="poins">2500 pkt</div>
+            <input name="Text" type="hidden" value="" Schowek na rower" />
+            <div class="button"><asp:button id="Button1"
+            usesubmitbehavior="true"
+            text="Open Web site"
+            onclientclick="ShowAlert()"
+            runat="server" onclick="Button1_Click" /><button type-"submit">Wybieram</button></div>
+
+        }
+    </div>
+</div>

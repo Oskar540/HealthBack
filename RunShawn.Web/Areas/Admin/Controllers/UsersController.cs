@@ -1,0 +1,282 @@
+﻿using FluentBootstrap;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using RunShawn.Core.Features.Roles.Model;
+using RunShawn.Core.Features.Users;
+using RunShawn.Core.Features.Users.Model;
+using RunShawn.Web.Areas.Admin.Models.Users;
+using RunShawn.Web.Attributes;
+using RunShawn.Web.Extentions;
+using RunShawn.Web.Extentions.Contoller;
+using RunShawn.Web.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
+
+namespace RunShawn.Web.Areas.Admin.Controllers
+{
+    [AllowAnonymous]
+    [Authorize(Roles = "Administrator")]
+    public partial class UsersController : BaseController
+    {
+        #region InjectUserManager
+        private ApplicationUserManager _userManager;
+
+        public ApplicationUserManager UserManager
+        {
+            get => _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            private set => _userManager = value;
+        }
+        #endregion
+
+        #region Ctor
+        public UsersController()
+        {
+
+        }
+
+        public UsersController(ApplicationUserManager userManager)
+        {
+            _userManager = userManager;
+        }
+        #endregion
+
+        #region Index()
+        public virtual ActionResult Index()
+        {
+            return RedirectToAction(MVC.Admin.Users.List());
+        }
+        #endregion
+
+        #region List()
+        public virtual ActionResult List()
+        {
+            var model = UsersService.GetAll()
+                                    .MapTo<List<UserListViewModel>>();
+
+            return View(MVC.Admin.Users.Views.List, model);
+        }
+        #endregion
+
+        #region Create()
+        public virtual ActionResult Create()
+        {
+            var roles = RolesService.GetAll()
+                                    .Select(x => new SelectListItem
+                                    {
+                                        Value = x.Id,
+                                        Text = x.Name
+                                    })
+                                    .ToList();
+
+
+            var model = new UserViewModel
+            {
+                Roles = roles
+            };
+            return View(MVC.Admin.Users.Views.Create, model);
+        }
+        #endregion
+
+        #region CreatePost()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public virtual async Task<ActionResult> Create(UserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = model.MapTo<ApplicationUser>();
+                try
+                {
+                    await UserManager.CreateAsync(user, model.Password);
+                    if (!string.IsNullOrEmpty(model.RoleId) && !string.IsNullOrEmpty(user.Id))
+                    {
+                        RolesService.SetRole(user.Id, model.RoleId);
+                    }
+
+                    TempData[_alert] = new Alert($"Dodano Użytkownika {user.UserName}", AlertState.Success);
+                    return RedirectToAction(MVC.Admin.Users.List());
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                }
+            }
+
+            var roles = RolesService.GetAll()
+                                   .Select(x => new SelectListItem
+                                   {
+                                       Value = x.Id,
+                                       Text = x.Name
+                                   })
+                                   .ToList();
+            model.Roles = roles;
+
+            TempData[_alert] = new Alert("Niepoprawny formularz", AlertState.Danger);
+            return View(MVC.Admin.Users.Views.Create, model);
+        }
+        #endregion
+
+        #region Edit()
+        public virtual ActionResult Edit(string id)
+        {
+            var roles = RolesService.GetAll()
+                                    .Select(x => new SelectListItem
+                                    {
+                                        Value = x.Id,
+                                        Text = x.Name
+                                    })
+                                    .ToList();
+
+            var model = UsersService.GetById(id)
+                                     .MapTo<UserEditViewModel>();
+
+            model.RoleId = RolesService.GetByUser(id);
+            model.Roles = roles;
+
+            return View(MVC.Admin.Users.Views.Edit, model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public virtual ActionResult Edit(UserEditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var user = model.MapTo<User>();
+                    UsersService.Update(user);
+
+                    if (!string.IsNullOrEmpty(user.Id))
+                    {
+                        RolesService.ChangeRole(user.Id, model.RoleId);
+                    }
+
+                    TempData[_alert] = new Alert($"Zaktualizowano Użytkownika {user.UserName}", AlertState.Success);
+                    return RedirectToAction(MVC.Admin.Users.List());
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                }
+            }
+
+            var roles = RolesService.GetAll()
+                                   .Select(x => new SelectListItem
+                                   {
+                                       Value = x.Id,
+                                       Text = x.Name
+                                   })
+                                   .ToList();
+
+            model.Roles = roles;
+            TempData[_alert] = new Alert("Niepoprawny formularz", AlertState.Danger);
+            return View(MVC.Admin.Users.Views.Edit, model);
+        }
+        #endregion
+
+        #region Delete()
+        public virtual ActionResult Delete(string id)
+        {
+            try
+            {
+                UsersService.Delete(id);
+
+                TempData[_alert] = new Alert("Pomyślnie Usunięto", AlertState.Success);
+                return RedirectToAction(MVC.Admin.Users.List());
+            }
+            catch (Exception)
+            {
+                TempData[_alert] = new Alert("Wystąpił Błąd podczas usuwania", AlertState.Danger);
+                return RedirectToAction(MVC.Admin.Users.List());
+            }
+        }
+        #endregion
+
+        #region GetAvatar()
+        [AllowAnonymous]
+        public virtual FileContentResult GetAvatar()
+        {
+
+            String userId = User.Identity.GetUserId();
+
+            var user = UsersService.GetById(userId);
+
+            var avatar = user.Avatar;
+            if (avatar != null && avatar.Length > 0)
+            {
+                return new FileContentResult(user.Avatar, "image/jpeg");
+            }
+            else
+            {
+                try
+                {
+                    string fileName = HttpContext.Server.MapPath(@"~/Content/images/user.png");
+
+                    byte[] imageData = null;
+                    FileInfo fileInfo = new FileInfo(fileName);
+
+                    long imageFileLength = fileInfo.Length;
+
+                    FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                    BinaryReader br = new BinaryReader(fs);
+                    imageData = br.ReadBytes((int)imageFileLength);
+
+                    return new FileContentResult(imageData, "image/jpeg");
+
+                }
+                catch (FileNotFoundException)
+                {
+                    return new FileContentResult(new byte[1], "image/jpeg");
+                }
+
+            }
+
+        }
+        #endregion
+
+        #region GetScores()
+        [AllowAnonymous]
+        public virtual ActionResult GetScores()
+        {
+            var user = UsersService.GetById(User.Identity.GetUserId());
+            if (user.Scores.HasValue)
+            {
+                return Content(user.Scores.Value.ToString());
+            }
+            else
+            {
+                return Content("0");
+            }
+        }
+        #endregion
+
+        #region SetScores()
+        [AllowAnonymous]
+        public virtual ActionResult AddScores(string userId, int count)
+        {
+            UsersService.SetScores(userId, count);
+            return RedirectToAction(MVC.Admin.Users.List());
+        }
+
+        public virtual ActionResult RemoveScores(string userId, int count)
+        {
+            UsersService.SetScores(userId, count, false);
+            return RedirectToAction(MVC.Admin.Users.List());
+        }
+
+        [HttpPost]
+        [AjaxOnly]
+        public virtual JsonResult SetScores(string userId, int count)
+        {
+            UsersService.ChangeScores(userId, count);
+            return Json(true);
+        }
+        #endregion
+    }
+}

@@ -1,0 +1,205 @@
+﻿@{
+    ViewBag.Title = "List";
+}
+
+
+
+@using (Html.Bootstrap().Heading2().Begin())
+{
+    <text>Produkty</text>
+}
+@using (var group = Html.Bootstrap().ButtonGroup().Begin())
+{
+    @group.Button("Dodaj").SetId("btn-add").SetIcon(Icon.Plus).SetState(ButtonState.Success)
+}
+<div id="categories-list">
+    @Html.Action(MVC.Admin.Categories.GenerateList())
+</div>
+
+<div class="modal" id="categories-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Dodaj Kategorie</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body" id="form-container">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="categories-move-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Przenoszenie artkułów</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body" id="form-move">
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="categories-move-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Przenoszenie artkułów</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body" id="form-move">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="categories-edit-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edycja artkułów</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body" id="form-edit">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#categories-modal").on("submit", "#categories-form", function (e)
+    {
+        e.preventDefault(); 
+
+        var form = $(this);
+        $.ajax({
+            url: form.attr("action"),
+            method: form.attr("method"),  
+            data: form.serialize(),
+            success: function (partialResult) {
+                $("#categories-list").html(partialResult);
+                $.ajax({
+                    url: "@Url.Action(MVC.Admin.Categories.Create())",
+                    method: "get",
+                    success: function (partialForm)
+                    {
+                        $("#form-container").html(partialForm);
+                    }
+                });
+            }
+        });
+    });
+
+    $("#btn-add").on("click", function (e) {
+        $.ajax({
+            url: "@Url.Action(MVC.Admin.Categories.Create())",
+            method: "Get",
+            success: function (partialForm) {
+                $("#form-container").html(partialForm);
+                $('#categories-modal').modal('show');
+            }
+        });
+    });
+
+    $("#categories-edit-modal").on("submit", "#categories-edit-form", function (e) {
+
+        e.preventDefault();
+        debugger;
+        var form = $(this);
+        $.ajax({
+            url: form.attr("action"),
+            method: form.attr("method"),
+            data: form.serialize(),
+            success: function (partialResult) {
+                $("#categories-list").html(partialResult);
+                $('#categories-edit-modal').modal('hide');
+            }
+        });
+
+    });
+
+    $("#categories-list").on("click", ".btn-edit", function (e) {
+        e.preventDefault();
+        var id = $(this).val();
+        $.ajax({
+            url: "@Url.Action(MVC.Admin.Categories.Edit())?id=" + id,
+            method: "Get",
+            success: function (partialForm) {
+                $("#form-edit").html(partialForm);
+                $('#categories-edit-modal').modal('show');
+            }
+        });
+
+    });
+
+
+    $("#categories-list").on("click", ".btn-remove", function (e)
+    {
+        var id = $(this).val();
+        e.preventDefault();
+        $.ajax({
+        url: "@Url.Action(MVC.Admin.Categories.Delete())?id=" + id,
+        method: "Get",
+            success: function (data) {
+                if (data.status == 10) {
+                        $.ajax({
+                            url: "@Url.Action(MVC.Admin.Categories.GenerateList())",
+                            method: "Get",
+                            success: function (categoriesList) {
+                                $("#categories-list").html(categoriesList);
+                        }
+                    })
+                }
+                else {
+                    $.ajax({
+                        url: "@Url.Action(MVC.Admin.Categories.ChangeArticlesCategory())?categoryId=" + id,
+                        method: "Get",
+                        success: function (partialForm) {
+                            $("#form-move").html(partialForm);
+                        }
+                    });
+                    $('#categories-move-modal').modal('show'); 
+
+                }
+            }
+        });
+    });
+
+
+    $("#categories-move-modal").on("submit", "#categories-move-form", function (e)
+    {
+        e.preventDefault(); 
+
+        var form = $(this);
+        $.ajax({
+            url: form.attr("action"),
+            method: form.attr("method"),  
+            data: form.serialize(),
+            success: function (partialResult) {
+                $("#categories-list").html(partialResult);
+                $('#categories-move-modal').modal('hide'); 
+
+            }
+        });
+    });
+</script>

@@ -1,0 +1,10 @@
+D:\RunShawn-hackhaton\RunShaw.Database\bin\Debug\RunShaw.Database.exe.config
+D:\RunShawn-hackhaton\RunShaw.Database\bin\Debug\RunShaw.Database.exe
+D:\RunShawn-hackhaton\RunShaw.Database\bin\Debug\RunShaw.Database.pdb
+D:\RunShawn-hackhaton\RunShaw.Database\bin\Debug\dbup-core.dll
+D:\RunShawn-hackhaton\RunShaw.Database\bin\Debug\dbup-sqlserver.dll
+D:\RunShawn-hackhaton\RunShaw.Database\obj\Debug\RunShaw.Database.csprojAssemblyReference.cache
+D:\RunShawn-hackhaton\RunShaw.Database\obj\Debug\RunShaw.Database.csproj.CoreCompileInputs.cache
+D:\RunShawn-hackhaton\RunShaw.Database\obj\Debug\RunShaw.Database.csproj.CopyComplete
+D:\RunShawn-hackhaton\RunShaw.Database\obj\Debug\RunShaw.Database.exe
+D:\RunShawn-hackhaton\RunShaw.Database\obj\Debug\RunShaw.Database.pdb

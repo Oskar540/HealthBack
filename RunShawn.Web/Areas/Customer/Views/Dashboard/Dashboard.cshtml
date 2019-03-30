@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+}
+
+<div class="statistics-container">
+    <div class="single-statistics">
+        <span class="count_top"><i class="fa fa-user"></i> Twoje punkty</span>
+        <div class="count">@Html.Action(MVC.Admin.Users.GetScores())</div>
+    </div>
+    <div class="single-statistics">
+        <span class="count_top"><i class="fas fa-trophy"></i> Twoje osiągnięcia</span>
+        <div class="count">4</div>
+    </div>
+    <div class="single-statistics">
+        <span class="count_top"><i class="fas fa-award"></i> Osiągnięcia do zdobycia</span>
+        <div class="count">1</div>
+    </div>
+</div>
+<header>
+    <h3>Statystyki</h3>
+</header>
+<div class="single-chart-container"><div class="single-chart"><canvas id="line-chart-customer"></canvas></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script src="~/Scripts/utils.js"></script>
+<script>
+    new Chart(document.getElementById("line-chart-customer"), {
+        type: 'line',
+        data: {
+            labels: ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'],
+            datasets: [{
+                data: [0, 5, 15, 20, 20,20, 21, 19, 18, 18,22, 20],
+                label: "Bieganie",
+                borderColor: "#3e95cd",
+                fill: false
+            }, {
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                label: "Siłownia",
+                borderColor: "#8e5ea2",
+                fill: false
+            }, {
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                label: "Jazda na rowerze",
+                borderColor: "#3cba9f",
+                fill: false
+            }
+            ]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Twoja aktywność w    ciągu roku'
+            }
+        }
+    });
+</script>

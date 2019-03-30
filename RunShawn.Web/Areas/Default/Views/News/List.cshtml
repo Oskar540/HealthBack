@@ -1,0 +1,62 @@
+﻿
+@using RunShawn.Web.Areas.Default.Models.News
+@model  ArticleList
+
+<div class="container slider-container">
+    @if (Model.FeaturedArticles.Count() == 1)
+    {
+        Html.RenderPartial(MVC.Default.News.Views._FeaturedList, Model.FeaturedArticles);
+    }
+    else if (Model.FeaturedArticles.Count() > 1)
+    {
+        <div id="FeaturedArticles" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner" id="">
+                @{
+                    Html.RenderPartial(MVC.Default.News.Views._FeaturedList, Model.FeaturedArticles);
+                }
+            </div>
+            <a class="left carousel-control" href="#FeaturedArticles" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#FeaturedArticles" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    }
+</div>
+<div class="container">
+    <div class="row">
+        @foreach (var item in Model.Articles)
+        {
+            <div class="col-sm-4">
+                <a href="@Url.Action(MVC.Default.News.Details(item.Id))">
+                    <div class="medium-box nature">
+                        <header class="box-header @(string.IsNullOrEmpty(item.FeaturedImage) ? "empty" : String.Empty)" style="background-image: url(@(string.IsNullOrEmpty(item.FeaturedImage) ? $"'{Url.Content("~/Content/images/empty-photo.png")}'" : item.FeaturedImage));">
+                            <div class="article-category" style="background-color:@item.CategoryColor;">@item.CategoryTitle</div>
+                        </header>
+                        <footer class="box-footer">
+                            <div class="article-info">
+                                <h1>@item.Title</h1>
+                                <span class="data">@item.PublishDate.ToString("dd MMMM yyyy")</span>
+                                <span class="break">|</span>
+                                <span class="autor-name">@item.CreatedByName</span>
+                            </div>
+                        </footer>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>
+<div class="pager">
+    @Html.Pager(Model.Articles.PageSize, Model.Articles.PageIndex, Model.Articles.PageCount)
+</div>
+<div class="countdown-bar">
+    <div class="countdown-caption">
+        <h6>Startujemy za </h6>
+        <p class="countdown-text">00<span class="time-letter">dni</span> 00<span class="time-letter">godz.</span>00<span class="time-letter">min.</span>00<span class="time-letter">sekund</span></p>
+
+    </div>
+</div>

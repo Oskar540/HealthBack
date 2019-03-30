@@ -1,0 +1,13 @@
+D:\RunShawn-hackhaton\RunShawn.Core\bin\Debug\RunShawn.Core.dll
+D:\RunShawn-hackhaton\RunShawn.Core\bin\Debug\RunShawn.Core.pdb
+D:\RunShawn-hackhaton\RunShawn.Core\bin\Debug\FSharp.Data.SqlProvider.dll
+D:\RunShawn-hackhaton\RunShawn.Core\bin\Debug\Simple.Data.Ado.dll
+D:\RunShawn-hackhaton\RunShawn.Core\bin\Debug\Simple.Data.dll
+D:\RunShawn-hackhaton\RunShawn.Core\bin\Debug\Simple.Data.RawSql.dll
+D:\RunShawn-hackhaton\RunShawn.Core\bin\Debug\Simple.Data.SqlServer.dll
+D:\RunShawn-hackhaton\RunShawn.Core\bin\Debug\System.Data.SqlClient.dll
+D:\RunShawn-hackhaton\RunShawn.Core\obj\Debug\RunShawn.Core.csprojAssemblyReference.cache
+D:\RunShawn-hackhaton\RunShawn.Core\obj\Debug\RunShawn.Core.csproj.CoreCompileInputs.cache
+D:\RunShawn-hackhaton\RunShawn.Core\obj\Debug\RunShawn.Core.csproj.CopyComplete
+D:\RunShawn-hackhaton\RunShawn.Core\obj\Debug\RunShawn.Core.dll
+D:\RunShawn-hackhaton\RunShawn.Core\obj\Debug\RunShawn.Core.pdb

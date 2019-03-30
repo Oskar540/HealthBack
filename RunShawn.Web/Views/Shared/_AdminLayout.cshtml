@@ -1,0 +1,178 @@
+﻿@using Microsoft.AspNet.Identity
+@using RunShawn.Web.Extentions
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - Runshawn</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="~/Content/MvcGrid/mvc-grid.css" rel="stylesheet">
+    <link href="~/Content/modal/modal.css" rel="stylesheet">
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/dashboard")
+    @Styles.Render("~/Content/datepicker")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/js")
+    <script>
+        NProgress.start();
+
+        $(document).ready(function () {
+            $('.input-validation-error').siblings('.form-group').addClass('has-error');
+            $('.field-validation-error').addClass('text-danger');
+        });
+    </script>
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <div class="page-logo"><a href="@Url.Action(MVC.Admin.Dashboard.Index())"> <i class="fas fa-heart"></i> HealthBack</a></div>
+        <nav class="dashboard-nav">
+            <ul class="navigation-menu">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li><a href="#">@User.Identity.Name</a></li>
+                }
+                @if (User.IsInRole("Customer"))
+                {
+                    <li><a href="#">Punkty: @Html.Action(MVC.Admin.Users.GetScores())</a></li>
+                }
+            </ul>
+        </nav>
+        <section class="user-panel">
+            <i class="far fa-bell" id="notification-button"></i>
+            <div class="user-image">
+                <img src="@Url.Action(MVC.Admin.Users.GetAvatar())" alt="user">
+            </div>
+            <div class="dropdown_list-user">
+                <div class="account-info">
+                    <img src="@Url.Action(MVC.Admin.Users.GetAvatar())" alt="user">
+                    <ul>
+                        @if (User.IsInRole(RoleTypes.Administrator.ToString()))
+                        {
+                            <li class="name"><a href="#">@RoleTypes.Administrator.GetDescription()</a></li>
+                        }
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="group"><a href="#">@User.Identity.Name</a></li>
+                        }
+                        <li class="rs-btn-default rs-btn-blue"><a href="@Url.Action(MVC.Admin.Manage.Index())">Ustawienia Konta</a></li>
+                    </ul>
+                </div>
+                <div class="logout">
+                    @if (Request.IsAuthenticated)
+                    {
+                        using (Html.BeginForm(MVC.Admin.Account.LogOff(), FormMethod.Post, new { id = "logoutForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button class="rs-btn-default rs-btn-blue">
+                                <a href="javascript:document.getElementById('logoutForm').submit()">Wyloguj się</a>
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="dropdown_list-notifications">
+                <section class="dropdown_list-header">
+                    Powiadomienia
+                </section>
+                <section class="notifications">
+                    <ul>
+                        <li>
+                            <div class="message">Rozważ zmianę hasła do panelu administratora</div>
+                            <div class="date">16 gru 2018</div>
+                        </li>
+                        <li>
+                            <div class="message">Zbliża się termin opłacenia hostingu</div>
+                            <div class="date">16 lis 2018</div>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+        </section>
+    </header>
+    <main id="dashboard-main">
+        <aside id="side-bar" class="side-bar">
+            @if (User.IsInRole("Administrator") || (User.IsInRole("Admin")))
+            {
+                <ul>
+                    <li class="category-header">
+                        <a href="/RunShawn/Admin/Dashboard/Dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard </a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="category-header ">
+                        <a href="/RunShawn/Admin/Users/List"><i class="fas fa-users-cog"></i> Użytkownicy </a>
+                    </li>
+                    <ol>
+                        <li><a href="/RunShawn/Admin/Users/Create"> Dodaj</a></li>
+                    </ol>
+                </ul>
+                <ul>
+                    <li class="category-header ">
+                        <a href="/RunShawn/Admin/Pages/List"><i class="fas fa-trophy"></i> Osiągnięcia </a>
+                    </li>
+                    <ol>
+                        <li><a href="/RunShawn/Admin/Pages/List"> Dodaj</a></li>
+                        <li><a href="/RunShawn/Admin/Pages/List"> Edytuj</a></li>
+                    </ol>
+                </ul>
+                <ul>
+                    <li class="category-header ">
+                        <a href="/RunShawn/Admin/Categories"><i class="far fa-money-bill-alt"></i> Produkty </a>
+                    </li>
+                    <ol>
+                        <li><a href="/RunShawn/Admin/Categories"> Dodaj</a></li>
+                        <li><a href="/RunShawn/Admin/Categories"> Edytuj</a></li>
+                    </ol>
+                </ul>
+            }
+            @if (User.IsInRole("Customer") || (User.Identity.Name == "j.kowalski@gmail.com"))
+            {
+                <ul>
+                    <li class="category-header">
+                        <a href="/RunShawn/Customer/Dashboard"><i class="fas fa-tachometer-alt"></i> Panel główny </a>
+                    </li>
+                </ul>
+
+                <ul>
+                    <li class="category-header ">
+                        <a href="/RunShawn/Customer/Dashboard/Rewards"><i class="far fa-money-bill-alt"></i> Nagrody </a>
+                    </li>
+                </ul>
+
+                <ul>
+                    <li class="category-header ">
+                        <a href="/RunShawn/Customer/Dashboard/Achievments"><i class="fas fa-trophy"></i> Osiągnięcia </a>
+                    </li>
+                </ul>
+
+            }
+
+        </aside>
+        <section id="page-container">
+            @{
+                var alert = TempData["Alert"] as Alert;
+                if (alert != null)
+                {
+                    Html.RenderPartial(MVC.Shared.Views._Alert, alert);
+                }
+            }
+            <div class="breadcrumbs-container">
+                @Html.MvcSiteMap().SiteMapPath()
+            </div>
+            @RenderBody()
+        </section>
+    </main>
+    <footer class="main-footer">HealthBack © @DateTime.Now.Year Wszelkie prawa zastrzeżone.</footer>
+</body>
+
+<script src="~/Scripts/MvcGrid/mvc-grid.js"></script>
+@Scripts.Render("~/bundles/validate")
+@Scripts.Render("~/bundles/bootstrap")
+@Scripts.Render("~/bundles/datepicker")
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+   
+
+</html>
+
